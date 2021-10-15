@@ -14,7 +14,7 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.A2krocksTools.Launcher.Light" parent="Theme.MaterialComponents.Light">
+    <style name="Theme.A2krocksTools.Launcher" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowShowWallpaper">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
@@ -22,8 +22,4 @@
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
-
-    <style name="Theme.A2krocksTools.Launcher" parent="Theme.A2krocksTools.Launcher.Light">
-        <item name="android:windowLightStatusBar">false</item>
-    </style>
 </resources>

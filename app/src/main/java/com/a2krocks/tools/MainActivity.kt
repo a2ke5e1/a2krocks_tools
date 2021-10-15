@@ -1,10 +1,11 @@
 package com.a2krocks.tools
 
 import android.Manifest.permission
-import android.Manifest.permission.ACCESS_COARSE_LOCATION
-import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.Manifest.permission.*
+import android.app.WallpaperManager
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -12,8 +13,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.core.graphics.drawable.toBitmap
+import androidx.palette.graphics.Palette
 import com.a2krocks.tools.databinding.ActivityMainBinding
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -55,8 +60,30 @@ class MainActivity : AppCompatActivity() {
             if (it != null ) { getWeatherDetails(getString(R.string.api), it.latitude, it.longitude) }
         }
 
+        themeManager()
 
+    }
 
+    private fun themeManager() {
+        val wallpaperManager: WallpaperManager = WallpaperManager.getInstance(this)
+        if (ActivityCompat.checkSelfPermission(this,
+                READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+        ) {
+           requestPermission()
+        }
+        val isWallpaperDark =     isColorDark(Palette.from(wallpaperManager.drawable.toBitmap()).generate().getDominantColor(Color.WHITE))
+
+        if (isWallpaperDark) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+    }
+
+    private fun isColorDark(color: Int): Boolean {
+        val darkness =
+            1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255
+        return darkness >= 0.5
     }
 
     /**
@@ -99,7 +126,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestPermission() {
-        ActivityCompat.requestPermissions(this, arrayOf(ACCESS_FINE_LOCATION), 1)
+        ActivityCompat.requestPermissions(this, arrayOf(ACCESS_FINE_LOCATION, READ_EXTERNAL_STORAGE), 1)
     }
 
 

@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:format12Hour="EEE, MMM dd"
+        android:format24Hour="EEE, MMM dd"
         android:letterSpacing="0.05"
         android:text="Wed, Oct 12"
         android:textSize="20sp"
