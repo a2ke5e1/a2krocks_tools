@@ -3,12 +3,18 @@ package com.a2krocks.tools
 import android.Manifest.permission
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.a2krocks.tools.databinding.ActivityMainBinding
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -23,13 +29,16 @@ class MainActivity : AppCompatActivity() {
 
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var binding: ActivityMainBinding
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        requestPermission()
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
+        binding.weatherTextView.visibility = View.GONE
+        binding.imageView.visibility = View.GONE
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         if (ActivityCompat.checkSelfPermission(this,
@@ -38,11 +47,14 @@ class MainActivity : AppCompatActivity() {
                 permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
         ) {
             requestPermission()
-        } else {
-            fusedLocationClient.lastLocation.addOnSuccessListener {
-                getWeatherDetails(getString(R.string.api), it.latitude, it.longitude)
-            }
         }
+
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10f
+        ) {
+            if (it != null ) { getWeatherDetails(getString(R.string.api), it.latitude, it.longitude) }
+        }
+
 
 
     }
@@ -72,6 +84,8 @@ class MainActivity : AppCompatActivity() {
                 Glide.with(applicationContext)
                     .load("https://openweathermap.org/img/wn/" + currentWeather.weather.get(0).icon + "@2x.png")
                     .into(findViewById(R.id.imageView))
+                binding.weatherTextView.visibility = View.VISIBLE
+                binding.imageView.visibility = View.VISIBLE
 
             }
 
@@ -85,7 +99,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestPermission() {
-        ActivityCompat.requestPermissions(this, arrayOf(ACCESS_COARSE_LOCATION), 1)
+        ActivityCompat.requestPermissions(this, arrayOf(ACCESS_FINE_LOCATION), 1)
     }
 
 
